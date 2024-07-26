@@ -1,5 +1,5 @@
-#ifndef _ILI948X_T4X_P_H_
-#define _ILI948X_T4X_P_H_
+#ifndef _HX8357_T4X_P_H_
+#define _HX8357_T4X_P_H_
 
 // uncomment below the line corresponding to your screen:
 
@@ -23,6 +23,30 @@
 
 #define _TFTWIDTH 320  // ILI9488 TFT width in default rotation
 #define _TFTHEIGHT 480 // ILI9488 TFT height in default rotation
+
+// Color definitions
+#define HX8357_BLACK 0x0000       /*   0,   0,   0 */
+#define HX8357_NAVY 0x000F        /*   0,   0, 128 */
+#define HX8357_DARKGREEN 0x03E0   /*   0, 128,   0 */
+#define HX8357_DARKCYAN 0x03EF    /*   0, 128, 128 */
+#define HX8357_MAROON 0x7800      /* 128,   0,   0 */
+#define HX8357_PURPLE 0x780F      /* 128,   0, 128 */
+#define HX8357_OLIVE 0x7BE0       /* 128, 128,   0 */
+#define HX8357_LIGHTGREY 0xC618   /* 192, 192, 192 */
+#define HX8357_DARKGREY 0x7BEF    /* 128, 128, 128 */
+#define HX8357_BLUE 0x001F        /*   0,   0, 255 */
+#define HX8357_GREEN 0x07E0       /*   0, 255,   0 */
+#define HX8357_CYAN 0x07FF        /*   0, 255, 255 */
+#define HX8357_RED 0xF800         /* 255,   0,   0 */
+#define HX8357_MAGENTA 0xF81F     /* 255,   0, 255 */
+#define HX8357_YELLOW 0xFFE0      /* 255, 255,   0 */
+#define HX8357_WHITE 0xFFFF       /* 255, 255, 255 */
+#define HX8357_ORANGE 0xFD20      /* 255, 165,   0 */
+#define HX8357_GREENYELLOW 0xAFE5 /* 173, 255,  47 */
+#define HX8357_PINK 0xF81F
+
+
+
 
 #define HX8357_NOP     0x00
 #define HX8357_SWRESET 0x01
@@ -97,6 +121,7 @@
 #define MADCTL_RGB 0x00 // Red-Green-Blue pixel order
 #define MADCTL_BGR 0x08 // Blue-Green-Red pixel order
 #define MADCTL_MH 0x04  // LCD refresh right to left
+
 
 /****************************************************************************************/
 // #define HX8357_CLOCK_READ 30   //equates to 8mhz

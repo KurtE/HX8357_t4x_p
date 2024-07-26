@@ -22,9 +22,9 @@
 
 #include <MemoryHexDump.h>
 
+#include <HX8357_t4x_p.h>
 #include <Teensy_Parallel_GFX.h>
 #include <Adafruit_GFX.h>  // Core graphics library
-#include "HX8357_t4x_p.h"
 #include "font_Arial.h"
 #include "font_ArialBold.h"
 #include <Fonts/FreeMonoBoldOblique12pt7b.h>
@@ -112,6 +112,7 @@ void setup() {
 
     tft.setRotation(ROTATION);
     tft.fillScreen(HX8357_BLACK);
+    Serial.printf("Screen width:%u height:%u\n", tft.width(), tft.height());
  
     delay(500);
     tft.fillScreen(HX8357_RED);
@@ -547,6 +548,9 @@ void drawTestScreen() {
     tft.setTextColor(HX8357_WHITE, HX8357_GREEN);
     tft.println("MonoBold");
 
+    // Lets see the colors at the 4 corners:
+    Serial.printf("UL:%x UR:%x, LL:%x, LR:%x\n", tft.readPixel(0, 0), tft.readPixel(tft.width()-1, 0),
+        tft.readPixel(tft.height()-1, 0), tft.readPixel(tft.width()-1, tft.height()-1));
 
     if (use_dma) {
         tft.updateScreenAsync();
