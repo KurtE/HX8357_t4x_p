@@ -125,8 +125,8 @@
 
 /****************************************************************************************/
 // #define HX8357_CLOCK_READ 30   //equates to 8mhz
-#define HX8357_CLOCK_READ 60 // equates to 4mhz
-//#define HX8357_CLOCK_READ 120   //equates to 2mhz
+//#define HX8357_CLOCK_READ 60 // equates to 4mhz
+#define HX8357_CLOCK_READ 120   //equates to 2mhz
 
 enum {
     HX8357D = 0
