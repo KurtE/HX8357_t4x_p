@@ -3,12 +3,6 @@
 
 // uncomment below the line corresponding to your screen:
 
-// #define ILI9481_1
-// #define ILI9481_2
-// #define ILI9486
-// #define ILI9488
-// #define R61529
-
 #include "Arduino.h"
 #include "DMAChannel.h"
 #include "FlexIO_t4.h"
@@ -139,6 +133,13 @@ class HX8357_t4x_p : public Teensy_Parallel_GFX {
     void begin(uint8_t display_name = HX8357D, uint8_t baud_speed_mhz = 20);
     uint8_t getBusSpd();
 
+    static uint32_t color888(uint8_t r, uint8_t g, uint8_t b) __attribute__((always_inline)) {
+            return 0xff000000 | (r << 16) | (g << 8) | b;
+    } 
+    static void color888toRGB(uint32_t color, uint8_t &r, uint8_t &g, uint8_t &b)  __attribute__((always_inline)) {
+        r = color >> 16; g = color >> 8; b = color; 
+    }
+
     // If used this must be called before begin
     // Set the FlexIO pins.  The first version you can specify just the wr, and read and optionsl first Data.
     // it will use information in the Flexio library to fill in d1-d7
@@ -182,6 +183,8 @@ class HX8357_t4x_p : public Teensy_Parallel_GFX {
     // void pushPixels24bitTearing(uint16_t * pcolors, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2 );
     void DMAerror();
 
+    bool writeRect24BPP(int16_t x, int16_t y, int16_t w, int16_t h, const uint32_t *pixels);
+
     /**************************************************************/
     void setScroll(uint16_t offset);
 
@@ -194,7 +197,7 @@ class HX8357_t4x_p : public Teensy_Parallel_GFX {
         #if !defined(ARDUINO_TEENSY40)
         return data;
         #else
-        if (_bus_width == 8) return data;
+        if (_bus_width != 10) return data;
         return (uint16_t)(data & 0x0F) | (uint16_t)((data & 0xF0) << 2);
         #endif
     }
@@ -210,32 +213,8 @@ class HX8357_t4x_p : public Teensy_Parallel_GFX {
     }
 
 
-    void setAddr(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1)
-        __attribute__((always_inline)) {
-
-        uint8_t Command;
-        uint8_t CommandValue[4];
-        if ((x0 != _previous_addr_x0) || (x1 != _previous_addr_x1)) {
-            Command = 0x2A;
-            CommandValue[0U] = x0 >> 8U;
-            CommandValue[1U] = x0 & 0xFF;
-            CommandValue[2U] = x1 >> 8U;
-            CommandValue[3U] = x1 & 0xFF;
-            SglBeatWR_nPrm_8(Command, CommandValue, 4U);
-            _previous_addr_x0 = x0;
-            _previous_addr_x1 = x1;
-        }
-        if ((y0 != _previous_addr_y0) || (y1 != _previous_addr_y1)) {
-            Command = 0x2B;
-            CommandValue[0U] = y0 >> 8U;
-            CommandValue[1U] = y0 & 0xFF;
-            CommandValue[2U] = y1 >> 8U;
-            CommandValue[3U] = y1 & 0xFF;
-            SglBeatWR_nPrm_8(Command, CommandValue, 4U);
-            _previous_addr_y0 = y0;
-            _previous_addr_y1 = y1;
-        }
-    }
+    void setAddr(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1);
+    
     enum { WRITE_SHIFT_TO = 20,
            READ_SHIFT_TO = 20,
            WRITE_TIMER_TO = 20 };
