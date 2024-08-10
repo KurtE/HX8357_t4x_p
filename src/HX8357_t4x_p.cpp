@@ -1490,6 +1490,64 @@ bool HX8357_t4x_p::writeRect24BPP(int16_t x, int16_t y, int16_t w, int16_t h, co
     return true;
 }
 
+void HX8357_t4x_p::fillRect24BPP(int16_t x, int16_t y, int16_t w, int16_t h, uint32_t color) {
+    uint32_t length = w * h;
+    // bail if nothing to do
+    if (length == 0) return ;
+    setAddr(x, y, x + w - 1, y + h -1);
+    //Serial.printf("fillRect24BPP(%d, %d, %d, %d, %x): %u\n", x, y, w, h, color, length, _bitDepth);
+
+
+    FlexIO_Config_SnglBeat();
+    /* Assert CS, RS pins */
+    CSLow();
+    DCLow();
+    // microSecondDelay();
+
+    /* Write command index */
+    p->SHIFTBUF[_write_shifter] = generate_output_word(HX8357_RAMWR);
+
+    /*Wait for transfer to be completed */
+    waitTimStat(__LINE__);
+    microSecondDelay();
+    /* De-assert RS pin */
+    DCHigh();
+    microSecondDelay();
+
+    if (_bitDepth == 24) {
+        while (length-- > 0) {
+            waitWriteShiftStat(__LINE__);
+            p->SHIFTBUF[_write_shifter] = generate_output_word(color >> 16);
+            waitWriteShiftStat(__LINE__);
+            p->SHIFTBUF[_write_shifter] = generate_output_word(color >> 8);
+            waitWriteShiftStat(__LINE__);
+            //if (length == 0)  p->TIMSTAT |= _flexio_timer_mask;
+            p->SHIFTBUF[_write_shifter] = generate_output_word(color);
+        }
+    } else {
+        uint16_t clr565 = color565(color >> 16, color >> 8, color);
+        while (length-- > 0) {
+
+            waitWriteShiftStat(__LINE__);
+            p->SHIFTBUF[_write_shifter] = generate_output_word(clr565 >> 8);
+
+            waitWriteShiftStat(__LINE__);
+            //if (length == 0)  p->TIMSTAT |= _flexio_timer_mask;
+            p->SHIFTBUF[_write_shifter] = generate_output_word(clr565 & 0xFF);
+        }
+    }
+    CSHigh();
+    /* Write the last pixel */
+    /*Wait for transfer to be completed */
+    waitTimStat(__LINE__);
+    microSecondDelay();
+}
+
+void HX8357_t4x_p::drawPixel24BPP(int16_t x, int16_t y, uint32_t color) {
+
+    writeRect24BPP(x, y, 1, 1, &color);
+}
+
 
 void HX8357_t4x_p::readRectFlexIO(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t *pcolors) {
     DBGPrintf("readRectFlexIO(%d, %d, %d, %d, %p)\n", x, y, w, h, pcolors);
